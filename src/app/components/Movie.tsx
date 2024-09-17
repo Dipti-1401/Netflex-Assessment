@@ -1,57 +1,72 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import axios from "axios";
 
-const MovieRow = () => {
+const dummyMoviesData = [
+  {
+    imdbID: "1",
+    Title: "The Dark Knight",
+    Poster: "https://m.media-amazon.com/images/I/51K8ouYrHeL._AC_.jpg",
+  },
+  {
+    imdbID: "2",
+    Title: "Interstellar",
+    Poster: "https://m.media-amazon.com/images/I/61+YvRV5cIL._AC_SL1001_.jpg",
+  },
+  {
+    imdbID: "3",
+    Title: "Dune",
+    Poster: "https://m.media-amazon.com/images/I/91g0utY2+hL._SL1500_.jpg",
+  },
+];
 
-    const [movies, setMovies] = useState([])
-
-    useEffect(() => {
-        async function fetchData() {
-            const request = await axios.get('https://api.themoviedb.org/3/movie/popular?api_key=3fd2be6f0c70a2a598f084ddfb75487c&language=en-US&page=1')
-            setMovies(request.data.results)
-            return request
-        }
-
-        fetchData();
-    })
-
-
-    return (
-        <RowContainer>
-            <h2>{movies[0].title}</h2>
-            <RowPoster>{movies.map((movie) => (
-                <Poster
-                    key={movie.id}
-                    src={`${movie.backdrop_path}`}
-                    alt={movie.name}>
-                </Poster>
-            ))}</RowPoster>
-        </RowContainer >
-    )
+interface Movie {
+  imdbID: string;
+  Title: string;
+  Poster: string;
 }
 
+interface Props {
+  title: string;
+}
 
-export default MovieRow;
+const Movie = ({ title }: Props) => {
+  const [movies, setMovies] = useState<Movie[]>([]);
 
-const RowContainer = styled.div`    
-    margin-left: 20px;
-    color: white;
-`
+  useEffect(() => {
+    setTimeout(() => {
+      setMovies(dummyMoviesData);
+    }, 1000);
+  }, []);
 
-const RowPoster = styled.img`
-    overflow: hidden;
-    padding: 20px;
-    display: flex;
-`
+  return (
+    <div>
+      <h2>{title}</h2>
+      <Row>
+        {movies.map((movie) => (
+          <MovieContainer key={movie.imdbID}>
+            <img src={movie.Poster} alt={movie.Title} />
+          </MovieContainer>
+        ))}
+      </Row>
+    </div>
+  );
+};
 
-const Poster = styled.img`
-    width: 100%;
-    max-height: 30%;
+export default Movie;
+
+const Row = styled.div`
+  display: flex;
+  overflow-x: scroll;
+  padding: 20px;
+`;
+
+const MovieContainer = styled.div`
+  margin-right: 10px;
+  img {
+    width: 150px;
     object-fit: contain;
-    margin-right: 20px;
-    tranition: transform 0.2s;
-    &:hover{   
-        transform: scale(1.06);
-    }
-`
+    cursor: pointer;
+  }
+`;
